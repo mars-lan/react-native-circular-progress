@@ -12,10 +12,13 @@ export default class CircularProgress extends React.PureComponent {
     };
   }
 
-  circlePath(x, y, radius, startAngle, endAngle) {
+  circlePath(x, y, radius, startAngle, endAngle, clockwise) {
     var start = this.polarToCartesian(x, y, radius, endAngle * 0.9999);
     var end = this.polarToCartesian(x, y, radius, startAngle);
     var largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+    if (!clockwise) {
+      largeArcFlag = largeArcFlag == '0' ? '1' : '0';
+    }
     var d = ['M', start.x, start.y, 'A', radius, radius, 0, largeArcFlag, 0, end.x, end.y];
     return d.join(' ');
   }
@@ -31,6 +34,7 @@ export default class CircularProgress extends React.PureComponent {
       backgroundColor,
       style,
       rotation,
+      clockwise,
       lineCap,
       arcSweepAngle,
       fill,
@@ -50,7 +54,8 @@ export default class CircularProgress extends React.PureComponent {
       sizeWithPadding,
       radius,
       0,
-      arcSweepAngle
+      arcSweepAngle,
+      clockwise
     );
     const currentFillAngle = (arcSweepAngle * this.clampFill(fill)) / 100;
     const circlePath = this.circlePath(
@@ -58,7 +63,8 @@ export default class CircularProgress extends React.PureComponent {
       sizeWithPadding,
       radius,
       0,
-      currentFillAngle
+      currentFillAngle,
+      clockwise
     );
     const coordinate = this.polarToCartesian(
       sizeWithPadding,
@@ -135,6 +141,7 @@ CircularProgress.propTypes = {
   tintColor: PropTypes.string,
   backgroundColor: PropTypes.string,
   rotation: PropTypes.number,
+  clockwise: PropTypes.bool,
   lineCap: PropTypes.string,
   arcSweepAngle: PropTypes.number,
   children: PropTypes.func,
@@ -147,6 +154,7 @@ CircularProgress.propTypes = {
 CircularProgress.defaultProps = {
   tintColor: 'black',
   rotation: 90,
+  clockwise: true,
   lineCap: 'butt',
   arcSweepAngle: 360,
   padding: 0,
